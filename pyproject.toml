@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "pos_classifier"
+version = "0.1.0"
+description = "ML pipeline for classifying POS data"
+authors = ["Julita Sobiczewska"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10.0"
+pandas = "^2.2.3"
+scikit-learn = "^1.6.1"
+nltk = "^3.9.1"
+fasttext = "^0.9.3"
+numpy = "1.26.4"
+fastapi = "^0.115.12"
+uvicorn = "^0.34.0"
+python-multipart = "^0.0.20"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

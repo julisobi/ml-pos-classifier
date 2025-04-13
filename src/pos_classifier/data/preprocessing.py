@@ -1,7 +1,8 @@
 import string
-
+import logging
 import pandas as pd
 import joblib
+
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from nltk.corpus import stopwords
@@ -16,6 +17,8 @@ from src.pos_classifier.config.config import (
 )
 
 nltk.download('stopwords')
+
+logger = logging.getLogger(__name__)
 
 
 def clean_text(text: str) -> str:
@@ -104,17 +107,17 @@ def prepare_data_for_fasttext(df: pd.DataFrame, output_path: str) -> None:
 
 def main():
     """Main script to preprocess and save training and validation data for FastText."""
-    print("Loading and preprocessing training data...")
+    logger.info("Loading and preprocessing training data...")
     df = load_data(TRAIN_DATA_PATH)
     df = preprocess_data(df)
 
-    print("Splitting the data into train and test sets...")
+    logger.info("Splitting the data into train and test sets...")
     train_df, test_df = split_data(df)
 
-    print("Saving FastText formatted training data...")
+    logger.info("Saving FastText formatted training data...")
     prepare_data_for_fasttext(train_df, FASTTEXT_TRAIN_FILE)
 
-    print("Saving FastText formatted validation data...")
+    logger.info("Saving FastText formatted test data...")
     prepare_data_for_fasttext(test_df, FASTTEXT_TEST_FILE)
 
 

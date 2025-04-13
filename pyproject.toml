@@ -16,6 +16,43 @@ numpy = "1.26.4"
 fastapi = "^0.115.12"
 uvicorn = "^0.34.0"
 python-multipart = "^0.0.20"
+mlflow = "^2.21.3"
+mypy = "^1.15.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pre-commit = "^4.2.0"
+ruff = "^0.11.5"
+
+[tool.ruff.lint]
+extend-select = [
+    "UP", # pyupgrade
+    "D",  # pydocstyle
+    "N",  # PEP8 names
+    "I"   # isort
+]
+ignore = [
+    "N999",
+    "D104",
+    "I001"
+]
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".venv",
+    ".log",
+    "data",
+    "images",
+    "output",
+    "mlfuns",
+    "mlartifacts",
+    "experiment_models"
+]
 
 [build-system]
 requires = ["poetry-core"]

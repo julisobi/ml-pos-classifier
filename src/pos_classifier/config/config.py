@@ -1,3 +1,10 @@
+"""Config file.
+
+This module provides all project configurations.
+"""
+
+import os
+
 from pathlib import Path
 from datetime import datetime
 
@@ -22,7 +29,24 @@ LABEL_ENCODER_PATH = MODEL_DIR / "label_encoder.pkl"
 OUTPUT_DIR = BASE_DIR / "outputs"
 PREDICTION_PATH = OUTPUT_DIR / "predictions.csv"
 
+# Logging paths
+LOG_DIR = BASE_DIR / "logs"
+LOG_PATH = LOG_DIR / "app.log"
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+
+# Experiments
+MLFLOW_TRACKING_URI = "http://127.0.0.1:5000/"
+MLFLOW_EXPERIMENT_NAME = "POS Classification"
+EXPERIMENT_DIR = BASE_DIR / "experiments"
+EXPERIMENT_MODEL_PATH = EXPERIMENT_DIR / "experiment_models"
+
 
 def get_prediction_output_path() -> Path:
+    """Generate a timestamped file path for saving batch prediction results.
+
+    Returns:
+        Path: A Path object pointing to the output CSV file within the OUTPUT_DIR.
+
+    """
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     return OUTPUT_DIR / f"predictions_{timestamp}.csv"

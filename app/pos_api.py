@@ -9,15 +9,20 @@ import logging
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
 
-from src.pos_classifier.model.predict import predict_label, decode_fasttext_label
-from src.pos_classifier.config.config import get_prediction_output_path
-from src.pos_classifier.config.logging_config import setup_logging
+from pos_classifier.data.postprocessing import decode_fasttext_label
+from pos_classifier.config.config import get_prediction_output_path, FASTTEXT_MODEL_PATH
+from pos_classifier.config.logging_config import setup_logging
+from pos_classifier.model.fasttext_wrapper import FastTextModelWrapper
 
 setup_logging()
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+params = {"model_location": str(FASTTEXT_MODEL_PATH)}
+fasttext_model = FastTextModelWrapper(params)
+fasttext_model.load_model()
 
 
 class ProductInput(BaseModel):
@@ -46,7 +51,7 @@ def get_prediction(data: ProductInput):
         f"Received prediction request for product description: {data.product_description}"
     )
 
-    label, probability = predict_label(data.product_description)
+    label, probability = fasttext_model.predict(data.product_description)
     category = decode_fasttext_label(label)
 
     logger.info(f"Prediction result: {category} with probability: {probability[0]}")
@@ -87,7 +92,7 @@ async def batch_prediction(file: UploadFile = File(...)):
 
         results = []
         for _, row in df.iterrows():
-            label, probability = predict_label(row["product_description"])
+            label, probability = fasttext_model.predict(row["product_description"])
             category = decode_fasttext_label(label)
             results.append(
                 {

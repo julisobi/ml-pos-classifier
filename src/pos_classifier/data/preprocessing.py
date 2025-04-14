@@ -8,8 +8,8 @@ from sklearn.model_selection import train_test_split
 from nltk.corpus import stopwords
 import nltk
 
-from src.pos_classifier.data.data_loader import load_data
-from src.pos_classifier.config.config import (
+from pos_classifier.data.data_loader import load_data
+from pos_classifier.config.config import (
     TRAIN_DATA_PATH,
     FASTTEXT_TRAIN_FILE,
     FASTTEXT_TEST_FILE,

@@ -17,7 +17,6 @@ fastapi = "^0.115.12"
 uvicorn = "^0.34.0"
 python-multipart = "^0.0.20"
 mlflow = "^2.21.3"
-mypy = "^1.15.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"

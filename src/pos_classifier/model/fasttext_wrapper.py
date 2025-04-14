@@ -55,7 +55,7 @@ class FastTextModelWrapper(PythonModel):
         self.model.save_model(self.params["model_location"])
         return self.params["model_location"]
 
-    def predict(self, text: str, threshold: float, k: int = 1) -> tuple:
+    def predict(self, text: str, threshold: float = 0.0, k: int = 1) -> tuple:
         """Predict the labels for a given text input using the trained model.
 
         Args:

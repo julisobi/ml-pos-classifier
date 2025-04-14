@@ -8,8 +8,8 @@ from itertools import product
 from mlflow.models.signature import ModelSignature
 from mlflow.types.schema import Schema, ColSpec
 
-from src.pos_classifier.model.fasttext_wrapper import FastTextModelWrapper
-from src.pos_classifier.config.config import (
+from pos_classifier.model.fasttext_wrapper import FastTextModelWrapper
+from pos_classifier.config.config import (
     FASTTEXT_TRAIN_FILE,
     FASTTEXT_TEST_FILE,
     EXPERIMENT_MODEL_PATH,

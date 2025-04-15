@@ -10,7 +10,12 @@ ENV/
 data/*
 outputs/*
 models/*
+logs/*
+mlartifacts
+mlruns
+experiments/experiment_models
 
 .idea/
 .pyc
 .log
+**/*.json

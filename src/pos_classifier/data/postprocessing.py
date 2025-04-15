@@ -4,19 +4,20 @@ from pos_classifier.config.config import LABEL_ENCODER_PATH
 
 
 def load_label_encoder() -> joblib:
-    """Load the LabelEncoder from LABEL_ENCODER_PATH.
+    """
+    Load the LabelEncoder from LABEL_ENCODER_PATH.
 
     Returns
     -------
     LabelEncoder
         Loaded label encoder instance
-
     """
     return joblib.load(LABEL_ENCODER_PATH)
 
 
 def decode_fasttext_label(predicted_label: list[str]) -> str:
-    """Decode FastText label string back to original category.
+    """
+    Decode FastText label string back to original category.
 
     Parameters
     ----------
@@ -27,7 +28,6 @@ def decode_fasttext_label(predicted_label: list[str]) -> str:
     -------
     str
         Original category label
-
     """
     label_encoder = load_label_encoder()
     label_id = predicted_label[0].replace("__label__", "")

@@ -1,0 +1,9 @@
+model: fasttext
+description: Best hyperparameters found via MLflow experiments
+date_saved: 2025-04-14
+
+parameters:
+  epoch: 25
+  lr: 0.5
+  wordNgrams: 2
+  verbose: 2

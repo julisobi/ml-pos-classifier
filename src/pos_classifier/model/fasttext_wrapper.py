@@ -6,28 +6,26 @@ This module provides FastText Model Wrapper.
 import fasttext
 from mlflow.pyfunc import PythonModel
 
+from pos_classifier.data.preprocessing import clean_text
+
 
 class FastTextModelWrapper(PythonModel):
-    """A wrapper class for training, testing, and predicting with a FastText model.
-
-    This wrapper provides methods for training a model, making predictions, and evaluating the model's performance.
-    """
+    """A wrapper class for training, testing, and predicting with a FastText model."""
 
     def __init__(self, params):
-        """Initialize the FastTextModelWrapper with the provided configuration.
+        """Initialize the FastTextModelWrapper with training and model parameters.
 
-        Args:
-            params (dict): A dictionary containing the parameters for training, testing, and model saving.
+        Parameters
+        ----------
+        params : dict
+            Dictionary of training and model parameters. Must include keys like 'input' and 'model_location'.
 
         """
         self.params = params
         self.model = None
 
     def load_model(self):
-        """Load a pre-trained FastText model from the specified location in the configuration.
-
-        The model will be loaded using the path specified by 'model_location' in the configuration.
-        """
+        """Load a pre-trained FastText model from the specified location in the configuration."""
         if "model_location" not in self.params:
             raise ValueError("Model location is not specified in the configuration.")
         self.model = fasttext.load_model(self.params["model_location"])
@@ -37,12 +35,12 @@ class FastTextModelWrapper(PythonModel):
         self.model = None
 
     def train(self):
-        """Train a FastText model using the provided parameters in the configuration.
+        """Train a FastText model using the parameters provided in `self.params`.
 
-        The model is saved at the path specified by 'model_location' in the configuration.
-
-        Returns:
-            str: The path where the trained model is saved.
+        Returns
+        -------
+        str
+            Path where the trained FastText model is saved.
 
         """
         fasttext_params = {
@@ -56,50 +54,59 @@ class FastTextModelWrapper(PythonModel):
         return self.params["model_location"]
 
     def predict(self, text: str, threshold: float = 0.0, k: int = 1) -> tuple:
-        """Predict the labels for a given text input using the trained model.
+        """Predict the label(s) for a given input text using the trained FastText model.
 
-        Args:
-            text (str): The text for which predictions are to be made.
-            threshold (float): The probability threshold to filter predictions.
-            k (int, optional): The number of predictions to return. Defaults to -1 (return all predictions).
+        Parameters
+        ----------
+        text : str
+            The input text to classify.
+        threshold : float, optional
+            The probability threshold to filter predictions. Defaults to 0.0.
+        k : int, optional
+            The number of top predictions to return. Defaults to 1.
 
-        Returns:
-            tuple: A tuple containing two elements:
-                - List of predicted labels
-                - Corresponding list of prediction probabilities
+        Returns
+        -------
+        tuple
+            A tuple containing:
+            - List of predicted labels
+            - List of corresponding prediction probabilities
 
         """
         if not self.model:
             raise ValueError("Model is not loaded. Please train or load a model first.")
 
+        text = clean_text(text)
         return self.model.predict(text, k=k, threshold=threshold)
 
-    def evaluate(self, test_file: str = None, threshold: float = 0.65) -> dict:
-        """Evaluate the model's performance on a test dataset.
+    def evaluate(self, test_file: str, threshold: float = 0.65) -> dict:
+        """Evaluate the model's performance on a labeled test dataset.
 
-        Args:
-            test_file (str, optional): Path to the test file. If None, the 'test_file' key in the configuration is used.
-            threshold (float, optional): The threshold for predictions to be considered relevant. Default is 0.65.
+        Parameters
+        ----------
+        test_file : str
+            Path to the test file.
+        threshold : float, optional
+            Probability threshold to consider predictions as valid. Default is 0.65.
 
-        Returns:
-            dict: A dictionary containing the following evaluation metrics:
-                - 'num_test': The number of test examples.
-                - 'precision': The precision score.
-                - 'recall': The recall score.
-                - 'f1': The f1 score.
+        Returns
+        -------
+        dict
+            Dictionary containing the following evaluation metrics:
+            - 'num_test' : int
+                Number of test samples.
+            - 'precision' : float
+                Precision score of the model.
+            - 'recall' : float
+                Recall score of the model.
+            - 'f1' : float
+                F1-score of the model.
 
         """
         if not self.model:
             raise ValueError("Model is not loaded. Please train or load a model first.")
 
-        test_file_path = test_file if test_file else self.params.get("test_file")
-
-        if not test_file_path:
-            raise ValueError(
-                "Test file path is not provided in the configuration or as an argument."
-            )
-
-        results = self.model.test(test_file_path, k=-1, threshold=threshold)
+        results = self.model.test(test_file, k=-1, threshold=threshold)
         precision = results[1]
         recall = results[2]
 

@@ -11,6 +11,9 @@ from datetime import datetime
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
+# Source directory
+SOURCE_DIR = Path(__file__).resolve().parent.parent
+
 # Data paths
 DATA_DIR = BASE_DIR / "data"
 TRAIN_DATA_PATH = DATA_DIR / "Training_Data.csv"
@@ -33,6 +36,15 @@ PREDICTION_PATH = OUTPUT_DIR / "predictions.csv"
 LOG_DIR = BASE_DIR / "logs"
 LOG_PATH = LOG_DIR / "app.log"
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+
+# Config paths
+CONFIG_DIR = SOURCE_DIR / "config"
+PARAMS_PATH = CONFIG_DIR / "params.yaml"
+
+# Monitoring paths
+APP_DIR = BASE_DIR / "app"
+MONITORING_DIR = APP_DIR / "monitoring"
+MONITORING_PATH = MONITORING_DIR / "monitor.json"
 
 # Experiments
 MLFLOW_TRACKING_URI = "http://127.0.0.1:5000/"

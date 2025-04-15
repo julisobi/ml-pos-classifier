@@ -5,6 +5,8 @@ This file provides logging configurations.
 
 from logging.config import dictConfig
 
+from src.pos_classifier.config.config import LOG_PATH
+
 LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -15,7 +17,7 @@ LOGGING_CONFIG = {
         "file": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": "logs/app.log",
+            "filename": LOG_PATH,
             "maxBytes": 10 * 1024 * 1024,
             "backupCount": 5,
             "formatter": "default",

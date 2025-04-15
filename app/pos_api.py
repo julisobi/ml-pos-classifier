@@ -5,10 +5,12 @@ This module provides FastAPI endpoints for product category prediction.
 
 import pandas as pd
 import logging
+import time
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
 
+from monitoring.json_monitor import update_monitoring_json, update_prediction_time
 from pos_classifier.data.postprocessing import decode_fasttext_label
 from pos_classifier.config.config import get_prediction_output_path, FASTTEXT_MODEL_PATH
 from pos_classifier.config.logging_config import setup_logging
@@ -38,15 +40,7 @@ class ProductInput(BaseModel):
 
 @app.post("/predict")
 def get_prediction(data: ProductInput):
-    """Predict the product category from a single product description.
-
-    Args:
-        data (ProductInput): An object containing the product description.
-
-    Returns:
-        dict: A dictionary with the predicted category and its probability.
-
-    """
+    """Get a category prediction for a given product description."""
     logger.info(
         f"Received prediction request for product description: {data.product_description}"
     )
@@ -59,21 +53,9 @@ def get_prediction(data: ProductInput):
     return {"prediction": category, "probability": probability[0]}
 
 
-@app.post("/predict-batch")
+@app.post("/predict_batch")
 async def batch_prediction(file: UploadFile = File(...)):
-    """Perform batch predictions from a CSV file containing product descriptions.
-
-    Args:
-        file (UploadFile): A CSV file with a 'product_description' column.
-
-    Returns:
-        dict: A summary of the batch prediction including output file path and rows processed.
-
-    Raises:
-        HTTPException: If the file format is invalid, the required column is missing,
-                        or any other error occurs during processing.
-
-    """
+    """Handle batch prediction requests from a CSV file."""
     logger.info(f"Received batch prediction request with file: {file.filename}")
 
     if not file.filename.endswith(".csv"):
@@ -90,10 +72,28 @@ async def batch_prediction(file: UploadFile = File(...)):
                 status_code=400, detail="Missing 'product_description' column in CSV."
             )
 
+        has_labels = "HUMAN_VERIFIED_Category" in df.columns
+        correct_predictions = 0
+        total_predictions = 0
+
         results = []
         for _, row in df.iterrows():
+            start_time = time.perf_counter()
             label, probability = fasttext_model.predict(row["product_description"])
             category = decode_fasttext_label(label)
+            elapsed = time.perf_counter() - start_time
+            update_prediction_time(elapsed)
+            update_monitoring_json(category)
+            if has_labels:
+                true_label = row["HUMAN_VERIFIED_Category"]
+                if pd.isna(true_label):
+                    continue
+                total_predictions += 1
+                update_monitoring_json("total_predictions")
+                if true_label == category:
+                    correct_predictions += 1
+                    update_monitoring_json("correct_predictions")
+
             results.append(
                 {
                     "product_description": row["product_description"],
@@ -101,7 +101,6 @@ async def batch_prediction(file: UploadFile = File(...)):
                     "probability": probability[0],
                 }
             )
-
         result_df = pd.DataFrame(results)
 
         output_path = get_prediction_output_path()

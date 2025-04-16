@@ -1,0 +1,58 @@
+Deployment Design Flowchart Description
+
+BigQuery
+Big Query serves as the central data warehouse.
+* Raw Data:
+    * Labels: product_description, category, and metadata; this dataset is a starting point of the pipeline.
+* Training Data:
+    * Cleaned and transformed version of the raw data after the data preprocessing step performed by the training pipeline.
+* Model Predictions:
+    * Stores results from the batch prediction process with fields such as predicted label, prediction confidence, timestamp, and metadata.
+    * An additional field review_required is added, where 20% of the predictions are randomly flagged as True to trigger manual review for continuous feedback.
+
+Training Pipeline (Kubernetes Job / CronJob)
+This component automates periodic or on-demand execution of the training workflow, running as a Kubernetes Job or CronJob:
+* Load Data:
+    * Reads raw data from BigQuery and optionally additional data sources.
+* Data Preprocessing:
+    * Cleans and transforms raw data into a format suitable for model training.
+* Model Training:
+    * Trains classification model using the preprocessed data.
+    * Supports hyperparameter tuning.
+* Model Artifact Registration:
+    * Saves trained model artifacts (e.g., label encoder, model weights, config files).
+    * Uploads the model to Google Cloud Storage to serve as the model registry.
+
+Google Cloud Storage (Model Registry)
+Acts as the centralized storage location for trained model artifacts.
+* Stores versioned models, including metadata such as:
+    * Training time
+    * Model performance metrics
+    * Dataset version used
+    * Hyperparameters
+* Artifacts stored here are used by the FastAPI inference service for model serving.
+
+FastAPI Inference Service (Kubernetes Deployment)
+A scalable, containerized service deployed on Kubernetes for serving batch predictions:
+* Load Data:
+    * Pulls fresh input data from BigQuery.
+* Data Preprocessing:
+    * Applies the same preprocessing logic as used during training.
+* Load Model:
+    * Loads the latest model from GCS model registry.
+* Batch Prediction:
+    * Performs inference over the incoming dataset.
+    * Outputs predictions along with metadata like confidence scores and timestamps.
+    * Sends predictions to BigQuery for storage and further monitoring.
+
+Monitoring & Feedback Loop
+* Monitoring Predictions:
+    * After batch prediction, data is forwarded to a monitoring system that tracks:
+        * Class distribution over time
+        * Request and processing latency
+* Human-in-the-Loop Review:
+    * A randomized 20% sample of predictions is flagged (review_required = True) and sent for human validation.
+    * Human annotators provide human_verified_label, which is then stored back in BigQuery.
+    * This dataset is also monitored and compared against model predictions to assess model performance (e.g. accuracy)
+* Closed Feedback Loop:
+    * Verified labels can be used to retrain and continuously improve the model in future pipeline runs.

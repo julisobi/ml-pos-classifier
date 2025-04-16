@@ -8,6 +8,7 @@ ENV/
 **/__pycache__/
 
 data/*
+app/monitoring/*.json
 outputs/*
 artifacts/*
 logs/*
@@ -18,4 +19,3 @@ experiments/experiment_models
 .idea/
 .pyc
 .log
-.json

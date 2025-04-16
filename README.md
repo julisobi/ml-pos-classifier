@@ -16,29 +16,37 @@ The current project is running using the following technologies:
 ```shell
 git clone https://github.com/julisobi/ml-pos-classifier.git`
 ```
-2. Add "Training_Data.csv" and "Query_and_Validation_Data.csv" to the [data](data) folder.
+2. Add data files:
+Place the following data files into the `data` folder:
+- `Training_Data.csv`
+- `Query_and_Validation_Data.csv`
 
 ## Docker
 
 This project includes two main modules:
-- Training: For model retraining
-- Inference: FastAPI app for serving predictions
-  Docker and Docker Compose are used to build and run both services.
+- Train: model retraining
+- Api: FastAPI app for serving predictions
 
 Build docker image:
 ```shell
 docker build -t pos-classifier .
 ```
 
-Retrain model:
+To retrain the model:
 ```shell
 docker run -v artifacts:/app/artifacts -e MODE=train pos-classifier
 ```
+`-v artifacts:/app/artifacts`: Mounts the artifacts volume to store the trained model.
+`-e MODE=train`: Instructs the container to execute the training script.
 
-Run API:
+To run FastAPI app:
 ```shell
 docker run -v artifacts:/app/artifacts -e MODE=api -p 8000:8000 pos-classifier
 ```
+`-v artifacts:/app/artifacts`: Mounts the artifacts volume, giving the container access to the trained model.
+`-e MODE=api`: Instructs the container to start the FastAPI server.
+`-p 8000:8000`: Exposes port 8000 for accessing the API locally.
+Access the API docs at http://0.0.0.0:8000/docs.
 
 ## Local Development
 
@@ -50,21 +58,19 @@ poetry config virtualenvs.in-project true
 poetry shell
 ```
 
-Run model training:
-
+To train the model locally:
 ```shell
 poetry run python src/pos_classifier/train.py
 ```
 
-Run monitoring dashboard:
-
+To start the monitoring dashboard (built with Streamlit):
 ```shell
-streamlit run app/monitoring/monitoring.py
+poetry run streamlit run app/monitoring/monitoring.py
 ```
 
-Run FastAPI (remember to add /docs to see the endpoints)
-
+To run the FastAPI app locally:
 ```shell
 poetry run uvicorn app.pos_api:app
 ```
+Access the API docs at http://127.0.0.1:8000/docs.
 

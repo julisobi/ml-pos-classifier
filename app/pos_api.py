@@ -6,15 +6,18 @@ This module provides FastAPI endpoints for product category prediction.
 import pandas as pd
 import logging
 import time
+import os
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
 
 from app.monitoring.json_monitor import update_monitoring_json, update_prediction_time
 from pos_classifier.data.postprocessing import decode_fasttext_label
-from pos_classifier.config.config import get_prediction_output_path, FASTTEXT_MODEL_PATH
+from pos_classifier.config.config import get_prediction_output_path, FASTTEXT_MODEL_PATH, OUTPUT_DIR
 from pos_classifier.config.logging_config import setup_logging
 from pos_classifier.model.fasttext_wrapper import FastTextModelWrapper
+
+from src.pos_classifier.data.preprocessing import clean_text
 
 setup_logging()
 
@@ -45,7 +48,7 @@ def get_prediction(data: ProductInput):
         f"Received prediction request for product description: {data.product_description}"
     )
 
-    label, probability = fasttext_model.predict(data.product_description)
+    label, probability = fasttext_model.predict(clean_text(data.product_description))
     category = decode_fasttext_label(label)
 
     logger.info(f"Prediction result: {category} with probability: {probability[0]}")
@@ -79,7 +82,7 @@ async def batch_prediction(file: UploadFile = File(...)):
         results = []
         for _, row in df.iterrows():
             start_time = time.perf_counter()
-            label, probability = fasttext_model.predict(row["product_description"])
+            label, probability = fasttext_model.predict(clean_text(row["product_description"]))
             category = decode_fasttext_label(label)
             logger.info(f"Predicted: {category}")
             elapsed = time.perf_counter() - start_time
@@ -102,7 +105,7 @@ async def batch_prediction(file: UploadFile = File(...)):
                 }
             )
         result_df = pd.DataFrame(results)
-
+        os.makedirs(OUTPUT_DIR, exist_ok=True)
         output_path = get_prediction_output_path()
         result_df.to_csv(output_path, index=False)
 

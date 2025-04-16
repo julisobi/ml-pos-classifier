@@ -12,6 +12,7 @@ from pos_classifier.config.config import (
     PARAMS_PATH,
     TRAIN_DATA_PATH,
     FASTTEXT_TRAIN_FILE,
+    MODEL_DIR
 )
 from pos_classifier.model.fasttext_wrapper import FastTextModelWrapper
 from pos_classifier.data.data_loader import load_data

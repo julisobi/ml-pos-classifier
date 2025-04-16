@@ -3,9 +3,11 @@
 This file provides logging configurations.
 """
 
+import os
+
 from logging.config import dictConfig
 
-from src.pos_classifier.config.config import LOG_PATH
+from pos_classifier.config.config import LOG_PATH, LOG_DIR
 
 LOGGING_CONFIG = {
     "version": 1,
@@ -39,4 +41,5 @@ LOGGING_CONFIG = {
 
 def setup_logging():
     """Configure logging using the predefined LOGGING_CONFIG dictionary."""
+    os.makedirs(LOG_DIR, exist_ok=True)
     dictConfig(LOGGING_CONFIG)

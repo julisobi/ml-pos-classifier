@@ -108,7 +108,7 @@ def reset_monitoring_data():
 st.set_page_config(page_title="Real-Time Monitoring", layout="wide")
 st.title("Real-Time Product Category Monitoring")
 
-st_autorefresh(interval=2000, limit=None, key="data_refresh")
+st_autorefresh(interval=5000, limit=None, key="data_refresh")
 
 if st.button("Reset Metrics"):
     reset_monitoring_data()

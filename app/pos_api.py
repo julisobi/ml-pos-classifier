@@ -10,7 +10,7 @@ import time
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
 
-from monitoring.json_monitor import update_monitoring_json, update_prediction_time
+from app.monitoring.json_monitor import update_monitoring_json, update_prediction_time
 from pos_classifier.data.postprocessing import decode_fasttext_label
 from pos_classifier.config.config import get_prediction_output_path, FASTTEXT_MODEL_PATH
 from pos_classifier.config.logging_config import setup_logging
@@ -81,18 +81,18 @@ async def batch_prediction(file: UploadFile = File(...)):
             start_time = time.perf_counter()
             label, probability = fasttext_model.predict(row["product_description"])
             category = decode_fasttext_label(label)
+            logger.info(f"Predicted: {category}")
             elapsed = time.perf_counter() - start_time
             update_prediction_time(elapsed)
             update_monitoring_json(category)
             if has_labels:
                 true_label = row["HUMAN_VERIFIED_Category"]
-                if pd.isna(true_label):
-                    continue
-                total_predictions += 1
-                update_monitoring_json("total_predictions")
-                if true_label == category:
-                    correct_predictions += 1
-                    update_monitoring_json("correct_predictions")
+                if not pd.isna(true_label):
+                    total_predictions += 1
+                    update_monitoring_json("total_predictions")
+                    if true_label == category:
+                        correct_predictions += 1
+                        update_monitoring_json("correct_predictions")
 
             results.append(
                 {

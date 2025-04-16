@@ -1,4 +1,5 @@
 import joblib
+import os
 
 from pos_classifier.config.config import LABEL_ENCODER_PATH
 
@@ -11,7 +12,21 @@ def load_label_encoder() -> joblib:
     -------
     LabelEncoder
         Loaded label encoder instance
+
+    Raises
+    ------
+    FileNotFoundError
+        If the encoder file does not exist.
+
+    ValueError
+        If the file is not a .pkl file.
     """
+    if not os.path.exists(LABEL_ENCODER_PATH):
+        raise FileNotFoundError(f"Label encoder file not found at: {LABEL_ENCODER_PATH}")
+
+    if not str(LABEL_ENCODER_PATH).endswith(".pkl"):
+        raise ValueError("Label encoder file must be a .pkl file.")
+
     return joblib.load(LABEL_ENCODER_PATH)
 
 

@@ -7,7 +7,7 @@ ENV/
 # caches
 **/__pycache__/
 
-data/*.txt
+data/*
 outputs/*
 artifacts/*
 logs/*
@@ -19,4 +19,3 @@ experiments/experiment_models
 .pyc
 .log
 .json
-.csv

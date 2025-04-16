@@ -48,10 +48,9 @@ exclude = [
     ".ruff_cache",
     ".venv",
     ".log",
-    "data",
-    "images",
+    "logs",
     "output",
-    "mlfuns",
+    "mlruns",
     "mlartifacts",
     "experiment_models"
 ]

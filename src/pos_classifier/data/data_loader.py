@@ -18,6 +18,5 @@ def load_data(path: str) -> pd.DataFrame:
     df = (
         pd.read_csv(path)
         .rename(columns=lambda x: x.lower().replace(" ", "_"))
-        .rename(columns=lambda x: x.replace("human_verified_category", "category"))
     )
     return df

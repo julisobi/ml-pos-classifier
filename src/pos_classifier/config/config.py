@@ -24,7 +24,7 @@ FASTTEXT_TRAIN_FILE = DATA_DIR / "fasttext_train.txt"
 FASTTEXT_TEST_FILE = DATA_DIR / "fasttext_test.txt"
 
 # Model paths
-MODEL_DIR = BASE_DIR / "models"
+MODEL_DIR = BASE_DIR / "artifacts"
 FASTTEXT_MODEL_PATH = MODEL_DIR / "fasttext_model.bin"
 LABEL_ENCODER_PATH = MODEL_DIR / "label_encoder.pkl"
 

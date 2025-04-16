@@ -9,7 +9,7 @@ ENV/
 
 data/*
 outputs/*
-models/*
+artifacts/*
 logs/*
 mlartifacts
 mlruns

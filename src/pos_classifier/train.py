@@ -5,6 +5,7 @@ This module provides methods for training FastText model.
 
 import yaml
 import logging
+import os
 
 from pos_classifier.config.logging_config import setup_logging
 from pos_classifier.config.config import (
@@ -44,6 +45,7 @@ def load_params(yaml_path=PARAMS_PATH):
 
 def main():
     """Load data and train FastText model."""
+    os.makedirs(MODEL_DIR, exist_ok=True)
     params = load_params()
     params.update(
         {"input": str(FASTTEXT_TRAIN_FILE), "model_location": str(FASTTEXT_MODEL_PATH)}

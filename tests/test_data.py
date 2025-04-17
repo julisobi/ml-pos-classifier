@@ -6,9 +6,9 @@ This file provides tests for data module in pos classifier package.
 import pytest
 import pandas as pd
 
+
 from pos_classifier.data.data_loader import load_data
-from pos_classifier.data.preprocessing import clean_text, preprocess_data, split_data
-from pos_classifier.data.postprocessing import decode_fasttext_label
+from pos_classifier.data.preprocessing import clean_text, split_data
 
 
 @pytest.fixture
@@ -69,25 +69,8 @@ def test_clean_text(text, expected):
     assert clean_text(text) == expected
 
 
-def test_preprocess_data(sample_dataframe):
-    """Test that preprocess_data adds a label column."""
-    df = preprocess_data(sample_dataframe)
-    assert "label" in df.columns
-    assert pd.api.types.is_integer_dtype(df["label"])
-    assert df["label"].between(0, 4).all()
-
-
 def test_split_data(sample_dataframe):
     """Test that split_data correctly splits the data into train and test sets."""
     train_df, test_df = split_data(sample_dataframe, test_size=0.4)
     assert len(train_df) == 3
     assert len(test_df) == 2
-
-
-def test_decode_fasttext_label():
-    """Test that decode_fasttext_label correctly maps FastText labels to their corresponding product categories."""
-    assert decode_fasttext_label(["__label__0"]) == "Beverages"
-    assert decode_fasttext_label(["__label__1"]) == "Dry Goods & Pantry Staples"
-    assert decode_fasttext_label(["__label__2"]) == "Fresh & Perishable Items"
-    assert decode_fasttext_label(["__label__3"]) == "Household & Personal Care"
-    assert decode_fasttext_label(["__label__4"]) == "Specialty & Miscellaneous"

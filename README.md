@@ -73,4 +73,3 @@ To run the FastAPI app locally:
 poetry run uvicorn app.pos_api:app
 ```
 Access the API docs at http://127.0.0.1:8000/docs.
-

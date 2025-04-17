@@ -13,7 +13,11 @@ from pydantic import BaseModel
 
 from app.monitoring.json_monitor import update_monitoring_json, update_prediction_time
 from pos_classifier.data.postprocessing import decode_fasttext_label
-from pos_classifier.config.config import get_prediction_output_path, FASTTEXT_MODEL_PATH, OUTPUT_DIR
+from pos_classifier.config.config import (
+    get_prediction_output_path,
+    FASTTEXT_MODEL_PATH,
+    OUTPUT_DIR,
+)
 from pos_classifier.config.logging_config import setup_logging
 from pos_classifier.model.fasttext_wrapper import FastTextModelWrapper
 
@@ -82,7 +86,9 @@ async def batch_prediction(file: UploadFile = File(...)):
         results = []
         for _, row in df.iterrows():
             start_time = time.perf_counter()
-            label, probability = fasttext_model.predict(clean_text(row["product_description"]))
+            label, probability = fasttext_model.predict(
+                clean_text(row["product_description"])
+            )
             category = decode_fasttext_label(label)
             logger.info(f"Predicted: {category}")
             elapsed = time.perf_counter() - start_time

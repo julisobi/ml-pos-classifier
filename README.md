@@ -74,3 +74,25 @@ poetry run uvicorn app.pos_api:app
 ```
 Access the API docs at http://127.0.0.1:8000/docs.
 
+##  Running FastText experiments with MLflow
+
+The `experiments` module orchestrates a series of experiments using different hyperparameter combinations for the FastText model. Each experiment logs parameters, metrics, and models to MLflow.
+
+```shell
+poetry run python experiments/run_experiment.py
+```
+With the MLflow UI running, navigate to http://127.0.0.1:5001.
+
+## Code Quality
+
+This project uses `pre-commit` to ensure consistent code formatting and quality.
+
+Install the Git hooks:
+```shell
+pre-commit install
+```
+
+Run on all files:
+```shell
+pre-commit run --all-files
+```

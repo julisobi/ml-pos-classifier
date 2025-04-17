@@ -1,3 +1,8 @@
+"""Postprocessing file.
+
+This module provides methods for postprocessing data from FastText model.
+"""
+
 import joblib
 import os
 
@@ -5,8 +10,7 @@ from pos_classifier.config.config import LABEL_ENCODER_PATH
 
 
 def load_label_encoder() -> joblib:
-    """
-    Load the LabelEncoder from LABEL_ENCODER_PATH.
+    """Load the LabelEncoder from LABEL_ENCODER_PATH.
 
     Returns
     -------
@@ -20,9 +24,12 @@ def load_label_encoder() -> joblib:
 
     ValueError
         If the file is not a .pkl file.
+
     """
     if not os.path.exists(LABEL_ENCODER_PATH):
-        raise FileNotFoundError(f"Label encoder file not found at: {LABEL_ENCODER_PATH}")
+        raise FileNotFoundError(
+            f"Label encoder file not found at: {LABEL_ENCODER_PATH}"
+        )
 
     if not str(LABEL_ENCODER_PATH).endswith(".pkl"):
         raise ValueError("Label encoder file must be a .pkl file.")
@@ -31,8 +38,7 @@ def load_label_encoder() -> joblib:
 
 
 def decode_fasttext_label(predicted_label: list[str]) -> str:
-    """
-    Decode FastText label string back to original category.
+    """Decode FastText label string back to original category.
 
     Parameters
     ----------
@@ -43,6 +49,7 @@ def decode_fasttext_label(predicted_label: list[str]) -> str:
     -------
     str
         Original category label
+
     """
     label_encoder = load_label_encoder()
     label_id = predicted_label[0].replace("__label__", "")

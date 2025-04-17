@@ -47,7 +47,7 @@ MONITORING_DIR = APP_DIR / "monitoring"
 MONITORING_PATH = MONITORING_DIR / "monitor.json"
 
 # Experiments
-MLFLOW_TRACKING_URI = "http://127.0.0.1:5000/"
+MLFLOW_TRACKING_URI = "http://127.0.0.1:5001/"
 MLFLOW_EXPERIMENT_NAME = "POS Classification"
 EXPERIMENT_DIR = BASE_DIR / "experiments"
 EXPERIMENT_MODEL_PATH = EXPERIMENT_DIR / "experiment_models"
